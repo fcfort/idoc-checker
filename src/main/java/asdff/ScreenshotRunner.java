@@ -71,7 +71,8 @@ public class ScreenshotRunner implements Runnable {
         byte[] newData = ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
         ScreenshotDiff diff = new ScreenshotDiff(oldData, newData);
         if (diff.isDifferent()) {
-          work.apply(diff);
+          oldData = newData;
+          work.apply(diff);          
         }
       }
     }
