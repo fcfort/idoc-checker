@@ -4,7 +4,8 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.util.UUID;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.imageio.ImageIO;
 
@@ -18,7 +19,7 @@ public class ImageDiffWriter implements DiffWorker {
 
   public void run(ByteArrayDifference diff) {
     try {
-      File diffFile = new File(diffPath, UUID.randomUUID().toString() + ".png");
+      File diffFile = new File(diffPath, new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(new Date()) + ".png");
       System.out.println("Found difference! Creating diff image: " + diffFile.toPath().toString());
       BufferedImage oldImage = ImageIO.read(new ByteArrayInputStream(diff.getOldData()));
       BufferedImage newImage = ImageIO.read(new ByteArrayInputStream(diff.getNewData()));
