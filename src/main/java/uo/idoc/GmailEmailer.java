@@ -1,4 +1,4 @@
-package asdff;
+package uo.idoc;
 
 import java.util.*;
 import javax.mail.*;
@@ -25,28 +25,28 @@ public class GmailEmailer {
     Properties props = System.getProperties();
     props.put("mail.smtp.starttls.enable", "true");
     props.put("mail.smtp.host", HOST);
-    props.put("mail.smtp.user", username);
-    props.put("mail.smtp.password", password);
     props.put("mail.smtp.port", PORT);
     props.put("mail.smtp.auth", "true");
 
-    Session session = Session.getDefaultInstance(props);
+    Session session = Session.getInstance(props, new javax.mail.Authenticator() {
+      protected PasswordAuthentication getPasswordAuthentication() {
+        return new PasswordAuthentication(username, password);
+      }
+    });
+
     MimeMessage message = new MimeMessage(session);
 
     try {
       message.setFrom(new InternetAddress(username));
 
-      // To get the array of addresses
       for(String t : to) {
         message.addRecipient(Message.RecipientType.TO, new InternetAddress(t));
       }
 
       message.setSubject(subject);
       message.setText(body);
-      Transport transport = session.getTransport("smtp");
-      transport.connect(HOST, username, password);
-      transport.sendMessage(message, message.getAllRecipients());
-      transport.close();
+      Transport.send(message);
+
     } catch (AddressException ae) {
       ae.printStackTrace();
     } catch (MessagingException me) {
