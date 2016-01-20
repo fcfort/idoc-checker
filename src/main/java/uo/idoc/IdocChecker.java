@@ -10,9 +10,9 @@ import com.google.common.collect.Lists;
 public class IdocChecker {
 
   private static final int IMAGE_HEIGHT_PX = 4000;
-  private static final int IMAGE_WIDTH_PX = 4000;
-  private static final int CHECK_INTERVAL_SECONDS = 60;  
-  
+  private static final int IMAGE_WIDTH_PX = 6000;
+  private static final int CHECK_INTERVAL_SECONDS = 60;
+
   @Parameter(names = "--username", description = "GMail username (no @gmail.com)")
   private String gmailUsername;
 
@@ -39,6 +39,7 @@ public class IdocChecker {
     ImageDiffEmailer emailer = new ImageDiffEmailer(new GmailEmailer(gmailUsername, gmailPassword), recipients);
 
     List<DiffWorker> workers = Lists.<DiffWorker> newArrayList(checker, emailer);
-    new ScreenshotRunner(imageUrl, IMAGE_HEIGHT_PX, IMAGE_WIDTH_PX, CHECK_INTERVAL_SECONDS, workers).run();
+    new ScreenshotRunner(imageUrl, IMAGE_HEIGHT_PX, IMAGE_WIDTH_PX, CHECK_INTERVAL_SECONDS, new SimpleByteDiffer(),
+        workers).run();
   }
 }

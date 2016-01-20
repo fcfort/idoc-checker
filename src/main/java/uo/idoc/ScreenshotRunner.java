@@ -34,15 +34,17 @@ public class ScreenshotRunner implements Runnable {
 
   private final Iterable<DiffWorker> workers;
   private final WebDriver driver;
+  private final ScreenshotDiffer differ;
 
-  public ScreenshotRunner(String url, int imageHeight, int imageWidth, int intervalSeconds, Iterable<DiffWorker> workers)
-      throws IOException {
+  public ScreenshotRunner(String url, int imageHeight, int imageWidth, int intervalSeconds, ScreenshotDiffer differ,
+      Iterable<DiffWorker> workers) throws IOException {
     File tempFile = createIframeHtml(imageHeight, imageWidth, url);
     this.intervalSeconds = intervalSeconds;
     tempFileURI = tempFile.toURI().toString();
     this.workers = workers;
     WebDriver ffDriver = new FirefoxDriver();
     driver = new Augmenter().augment(ffDriver);
+    this.differ = differ;
   }
 
   public void run() {
@@ -67,12 +69,14 @@ public class ScreenshotRunner implements Runnable {
       } else {
         System.out.println("Taking diff screenshot at " + (new Date()).toString());
         byte[] newData = ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
-        ScreenshotDiff diff = new ScreenshotDiff(oldData, newData);
-        if (diff.isDifferent()) {
-          oldData = newData;
+        if (differ.isDifferent(oldData, newData)) {
+          ByteArrayDifference difference = new ByteArrayDifference(oldData, newData);
+
           for (DiffWorker worker : workers) {
-            worker.run(diff);
+            worker.run(difference);
           }
+          
+          oldData = newData;
         }
       }
     }

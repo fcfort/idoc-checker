@@ -16,14 +16,14 @@ public class ImageDiffWriter implements DiffWorker {
     this.diffPath = diffPath;
   }
 
-  public void run(ScreenshotDiff diff) {
+  public void run(ByteArrayDifference diff) {
     try {
       File diffFile = new File(diffPath, UUID.randomUUID().toString() + ".png");
       System.out.println("Found difference! Creating diff image: " + diffFile.toPath().toString());
       BufferedImage oldImage = ImageIO.read(new ByteArrayInputStream(diff.getOldData()));
       BufferedImage newImage = ImageIO.read(new ByteArrayInputStream(diff.getNewData()));
 
-      BufferedImage diffImage = ImageDiffer.produceDiffImage(oldImage, newImage);
+      BufferedImage diffImage = DiffImageMaker.produceDiffImage(oldImage, newImage);
 
       ImageIO.write(diffImage, "png", diffFile);
     } catch (IOException e) {

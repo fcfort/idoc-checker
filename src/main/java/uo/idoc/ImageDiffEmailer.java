@@ -14,7 +14,7 @@ public class ImageDiffEmailer implements DiffWorker {
     this.recipients = recipients;
   }
   
-  public void run(ScreenshotDiff diff) {
+  public void run(ByteArrayDifference diff) {
     this.emailer.sendEmail(recipients, IDOC_SUBJECT, IDOC_SUBJECT);
   }
 

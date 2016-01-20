@@ -2,7 +2,7 @@ package uo.idoc;
 
 import java.awt.image.BufferedImage;
 
-public class ImageDiffer {
+public class DiffImageMaker {
   private static final int DIFF_COLOR = 0x00FF3E96;
 
   // http://stackoverflow.com/questions/23537710/java-get-differences-between-two-images
@@ -15,13 +15,12 @@ public class ImageDiffer {
     int height1 = img1.getHeight(null);
     int height2 = img2.getHeight(null);
 
-    assert ((width1 != width2) || (height1 != height2));
+    assert((width1 != width2) || (height1 != height2));
 
     if ((width1 != width2) || (height1 != height2)) {
       System.err.println("Error: Images dimensions mismatch");
       System.exit(1);
     }
-
     BufferedImage diffImage = new BufferedImage(width1, height1, BufferedImage.TYPE_INT_RGB);
 
     for (int i = 0; i < height1; i++) {
@@ -40,4 +39,3 @@ public class ImageDiffer {
     return diffImage;
   }
 }
-
