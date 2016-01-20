@@ -4,17 +4,24 @@ import java.util.*;
 import javax.mail.*;
 import javax.mail.internet.*;
 
-// http://stackoverflow.com/questions/46663/how-can-i-send-an-email-by-java-application-using-gmail-yahoo-or-hotmail
+/**
+ * http://stackoverflow.com/questions/46663/how-can-i-send-an-email-by-java-application-using-gmail-yahoo-or-hotmail
+ * Requires less secure access to gmail account. See https://support.google.com/accounts/answer/6010255?hl=en.
+ */
 public class GmailEmailer {
   private static final String HOST = "smtp.gmail.com";
   private static final String PORT = "587";
-  
-  private final String username; // GMail user name (just the part before "@gmail.com")
-  private final String password; // GMail password
 
-  public GmailEmailer(String username, String password) {
+  private final String username;
+  private final Authenticator auth;  
+  
+  public GmailEmailer(final String username, final String password) {
     this.username = username;
-    this.password = password;
+    this.auth = new javax.mail.Authenticator() {
+      protected PasswordAuthentication getPasswordAuthentication() {
+        return new PasswordAuthentication(username, password);
+      }
+    };
   }
   
   public void sendEmail(List<String> recipients, String subject, String body) {
@@ -28,11 +35,7 @@ public class GmailEmailer {
     props.put("mail.smtp.port", PORT);
     props.put("mail.smtp.auth", "true");
 
-    Session session = Session.getInstance(props, new javax.mail.Authenticator() {
-      protected PasswordAuthentication getPasswordAuthentication() {
-        return new PasswordAuthentication(username, password);
-      }
-    });
+    Session session = Session.getInstance(props, auth);
 
     MimeMessage message = new MimeMessage(session);
 
