@@ -7,7 +7,7 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.google.common.collect.Lists;
 
-public class IdocChecker {
+public class IdocCheckerMain {
   @Parameter(names = "--checkInterval", description = "How often to check website in seconds")
   private int checkIntervalSeconds = 60;  
   
@@ -33,7 +33,7 @@ public class IdocChecker {
   private String outputPath;
 
   public static void main(String... args) throws IOException {
-    IdocChecker main = new IdocChecker();
+    IdocCheckerMain main = new IdocCheckerMain();
     new JCommander(main, args);
     main.run();
   }
