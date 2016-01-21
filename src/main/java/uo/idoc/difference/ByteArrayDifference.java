@@ -1,4 +1,4 @@
-package uo.idoc;
+package uo.idoc.difference;
 
 public class ByteArrayDifference {
   private final byte[] oldData;

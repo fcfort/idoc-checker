@@ -1,8 +1,11 @@
-package uo.idoc;
+package uo.idoc.worker;
 
 import java.util.List;
 
-public class ImageDiffEmailer implements DiffWorker {
+import uo.idoc.GmailEmailer;
+import uo.idoc.difference.ByteArrayDifference;
+
+public class ImageDiffEmailer implements ImageDiffWorker {
   
   private final String IDOC_SUBJECT = "Found IDOC!";
   

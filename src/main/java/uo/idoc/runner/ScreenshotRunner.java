@@ -1,4 +1,4 @@
-package uo.idoc;
+package uo.idoc.runner;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,6 +16,10 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.google.common.base.Predicate;
 
+import uo.idoc.ScreenshotDiffer;
+import uo.idoc.difference.ByteArrayDifference;
+import uo.idoc.worker.ImageDiffWorker;
+
 public class ScreenshotRunner implements Runnable {
   private final String tempFileURI;
   private byte[] oldData;
@@ -32,12 +36,12 @@ public class ScreenshotRunner implements Runnable {
     return tempFile;
   }
 
-  private final Iterable<DiffWorker> workers;
+  private final Iterable<ImageDiffWorker> workers;
   private final WebDriver driver;
   private final ScreenshotDiffer differ;
 
   public ScreenshotRunner(String url, int imageHeight, int imageWidth, int intervalSeconds, ScreenshotDiffer differ,
-      Iterable<DiffWorker> workers) throws IOException {
+      Iterable<ImageDiffWorker> workers) throws IOException {
     File tempFile = createIframeHtml(imageHeight, imageWidth, url);
     this.intervalSeconds = intervalSeconds;
     tempFileURI = tempFile.toURI().toString();
@@ -72,7 +76,7 @@ public class ScreenshotRunner implements Runnable {
         if (differ.isDifferent(oldData, newData)) {
           ByteArrayDifference difference = new ByteArrayDifference(oldData, newData);
 
-          for (DiffWorker worker : workers) {
+          for (ImageDiffWorker worker : workers) {
             worker.run(difference);
           }
           

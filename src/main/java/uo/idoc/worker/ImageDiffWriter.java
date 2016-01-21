@@ -1,4 +1,4 @@
-package uo.idoc;
+package uo.idoc.worker;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -9,7 +9,10 @@ import java.util.Date;
 
 import javax.imageio.ImageIO;
 
-public class ImageDiffWriter implements DiffWorker {
+import uo.idoc.DiffImageMaker;
+import uo.idoc.difference.ByteArrayDifference;
+
+public class ImageDiffWriter implements ImageDiffWorker {
 
   private final String diffPath;
 

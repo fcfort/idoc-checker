@@ -1,4 +1,4 @@
-package uo.idoc;
+package uo.idoc.main;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -9,6 +9,8 @@ import javax.imageio.ImageIO;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
+
+import uo.idoc.DiffImageMaker;
 
 /** Diffs two image files provided by the user */
 public class ImageDiffMain {

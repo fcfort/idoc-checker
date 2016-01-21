@@ -1,4 +1,4 @@
-package uo.idoc;
+package uo.idoc.main;
 
 import java.io.IOException;
 import java.util.List;
@@ -6,6 +6,13 @@ import java.util.List;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.google.common.collect.Lists;
+
+import uo.idoc.worker.ImageDiffWorker;
+import uo.idoc.GmailEmailer;
+import uo.idoc.SimpleByteDiffer;
+import uo.idoc.runner.ScreenshotRunner;
+import uo.idoc.worker.ImageDiffEmailer;
+import uo.idoc.worker.ImageDiffWriter;
 
 public class IdocCheckerMain {
   @Parameter(names = "--checkInterval", description = "How often to check website in seconds")
@@ -42,7 +49,7 @@ public class IdocCheckerMain {
     ImageDiffWriter checker = new ImageDiffWriter(outputPath);
     ImageDiffEmailer emailer = new ImageDiffEmailer(new GmailEmailer(gmailUsername, gmailPassword), recipients);
 
-    List<DiffWorker> workers = Lists.<DiffWorker> newArrayList(checker, emailer);
+    List<ImageDiffWorker> workers = Lists.<ImageDiffWorker> newArrayList(checker, emailer);
     new ScreenshotRunner(imageUrl, imageHeightPx, imageWidthPx, checkIntervalSeconds, new SimpleByteDiffer(),
         workers).run();
   }
