@@ -6,8 +6,8 @@ import java.util.List;
 import difflib.Delta;
 import difflib.DiffUtils;
 import difflib.Patch;
-import uo.idoc.GmailEmailer;
 import uo.idoc.difference.StringDifference;
+import uo.idoc.email.GmailEmailer;
 
 // https://code.google.com/p/java-diff-utils/wiki/SampleUsage
 // http://stackoverflow.com/questions/13464954/how-do-i-split-a-string-by-line-break

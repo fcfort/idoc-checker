@@ -8,8 +8,8 @@ import com.beust.jcommander.Parameter;
 import com.google.common.collect.Lists;
 
 import uo.idoc.worker.ImageDiffWorker;
-import uo.idoc.GmailEmailer;
 import uo.idoc.SimpleByteDiffer;
+import uo.idoc.email.GmailEmailer;
 import uo.idoc.runner.ScreenshotRunner;
 import uo.idoc.worker.ImageDiffEmailer;
 import uo.idoc.worker.ImageDiffWriter;

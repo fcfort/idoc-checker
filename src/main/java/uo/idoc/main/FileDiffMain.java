@@ -10,9 +10,13 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.google.common.collect.Lists;
 
-import uo.idoc.GmailEmailer;
+import uo.idoc.ScreenshotTaker;
+import uo.idoc.email.Emailer;
+import uo.idoc.email.GmailEmailer;
+import uo.idoc.imgur.ImgurUploader;
+import uo.idoc.imgur.LargeImageUploader;
 import uo.idoc.runner.HttpRequestRunner;
-import uo.idoc.worker.StringDiffEmailer;
+import uo.idoc.worker.ImgurWorker;
 import uo.idoc.worker.StringDiffPrinter;
 import uo.idoc.worker.TextDiffWorker;
 
@@ -34,19 +38,46 @@ public class FileDiffMain {
   @Parameter(names = "--fileUrl", description = "URL to GET request", required = true)
   private String fileUrl;
 
+  @Parameter(names = "--imageUrl", description = "URL to screenshot", required = true)
+  private String imageUrl;
+
+  @Parameter(names = "--imageHeight", description = "Image height in pixels to capture")
+  private int imageHeightPx = 4200;
+
+  @Parameter(names = "--imageWidth", description = "Image width in pixels to capture")
+  private int imageWidthPx = 6500;
+
+  @Parameter(names = "--tagName", description = "Tag name to capture")
+  private String tagName = "svg";
+
+  @Parameter(names = "--outputPath", description = "Where to put the diff", required = true)
+  private String outputPath;
+  
+  @Parameter(names = "--imgurClientId", description = "imgur API Client ID", required = true)
+  private String imgurClientId;
+    
   public static void main(String[] args) throws IOException, InterruptedException {
     FileDiffMain main = new FileDiffMain();
     new JCommander(main, args);
     main.run();
   }
 
-  private void run() throws InterruptedException {
-    List<Integer> checkIntervalsMillis = Lists.newArrayList(ONE_MINUTE_MILLIS, FIVE_MINUTES_MILLIS,
-        THIRTY_MINUTES_MILLIS, ONE_HOUR_MILLIS);
+  private void run() throws InterruptedException, IOException {
+    List<Integer> checkIntervalsMillis = Lists.newArrayList(FIVE_MINUTES_MILLIS,
+        THIRTY_MINUTES_MILLIS);
     ExecutorService e = Executors.newFixedThreadPool(checkIntervalsMillis.size());
 
-    List<TextDiffWorker> workers = Lists.newArrayList(new StringDiffPrinter(),
-        new StringDiffEmailer(new GmailEmailer(gmailUsername, gmailPassword), recipients));
+    GmailEmailer gmailer = new GmailEmailer(gmailUsername, gmailPassword);    
+    ScreenshotTaker screenshotTaker = new ScreenshotTaker(imageUrl, imageHeightPx, imageWidthPx, 30, tagName);
+        
+    ImgurWorker imgurWorker = new ImgurWorker(
+        new LargeImageUploader(new ImgurUploader(imgurClientId)), 
+        screenshotTaker, 
+        new Emailer(gmailer, recipients));
+    
+    List<TextDiffWorker> workers = Lists.newArrayList(
+        new StringDiffPrinter(),
+        imgurWorker);
 
     for (int millis : checkIntervalsMillis) {
       e.submit(new HttpRequestRunner(fileUrl, workers, millis));

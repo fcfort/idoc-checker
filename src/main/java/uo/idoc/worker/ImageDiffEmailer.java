@@ -2,8 +2,8 @@ package uo.idoc.worker;
 
 import java.util.List;
 
-import uo.idoc.GmailEmailer;
 import uo.idoc.difference.ByteArrayDifference;
+import uo.idoc.email.GmailEmailer;
 
 public class ImageDiffEmailer implements ImageDiffWorker {
   

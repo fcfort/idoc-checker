@@ -6,6 +6,7 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+@Deprecated
 public class CornerIgnoringDiffer implements ScreenshotDiffer {
 
   private static final int CORNER_SIZE_PX = 100;

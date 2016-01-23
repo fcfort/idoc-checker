@@ -14,6 +14,9 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.io.CharStreams;
 import com.google.common.io.Closeables;
 
+import uo.idoc.model.House;
+import uo.idoc.model.HouseParser;
+
 public class HouseParserTest {
 
   private final HouseParser hp = new HouseParser();
