@@ -21,10 +21,7 @@ import uo.idoc.worker.StringDiffPrinter;
 import uo.idoc.worker.TextDiffWorker;
 
 public class FileDiffMain {
-  private static final int ONE_MINUTE_MILLIS = 60 * 1000;
   private static final int FIVE_MINUTES_MILLIS = 5 * 60 * 1000;
-  private static final int THIRTY_MINUTES_MILLIS = 30 * 60 * 1000;
-  private static final int ONE_HOUR_MILLIS = 60 * 60 * 1000;
 
   @Parameter(names = "--username", description = "GMail username (no @gmail.com)", required = true)
   private String gmailUsername;
@@ -63,8 +60,7 @@ public class FileDiffMain {
   }
 
   private void run() throws InterruptedException, IOException {
-    List<Integer> checkIntervalsMillis = Lists.newArrayList(FIVE_MINUTES_MILLIS,
-        THIRTY_MINUTES_MILLIS);
+    List<Integer> checkIntervalsMillis = Lists.newArrayList(FIVE_MINUTES_MILLIS);
     ExecutorService e = Executors.newFixedThreadPool(checkIntervalsMillis.size());
 
     GmailEmailer gmailer = new GmailEmailer(gmailUsername, gmailPassword);    

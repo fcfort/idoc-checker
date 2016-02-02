@@ -2,17 +2,34 @@ package uo.idoc;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.Toolkit;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.awt.image.FilteredImageSource;
+import java.awt.image.ImageFilter;
+import java.awt.image.ImageProducer;
+import java.awt.image.RGBImageFilter;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
 
 import uo.idoc.difference.HouseDifference;
 import uo.idoc.model.House;
 
 public class ScreenshotMarker {
 
+  private static final String HALO_IMG_RESOURCE = "halo-arrow.png";
+  
+  private final BufferedImage halo;
+  
   public ScreenshotMarker() {
-
+    try {
+      halo = ImageIO.read(this.getClass().getClassLoader().getResourceAsStream(HALO_IMG_RESOURCE));
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   private static final int OLD_COLOR = 0x00FF00E1;
@@ -47,51 +64,52 @@ public class ScreenshotMarker {
     for (House h : houses) {
       int x = h.getLatitude();
       int y = h.getLongitude();
-      // drawSquare(im, x + 8, y + 5, 6, color);
-      drawArrow(im, x + LATITUDE_OFFSET_PX, y + LONGITUDE_OFFSET_PX, color, isLeft);
+      drawHalo(im, x + LATITUDE_OFFSET_PX, y + LONGITUDE_OFFSET_PX, color, isLeft);
     }
-  }
+  }  
   
-  private void drawArrow(BufferedImage im, int x, int y, int color, boolean isLeft) {
+  private void drawHalo(BufferedImage im, int x, int y, int color, boolean isLeft) {
     Graphics2D graph = im.createGraphics();
-    graph.setColor(new Color(color));
-    
-    int xOffset = isLeft ? -30 : 30;
-    
-    drawArrowLine(graph, x + xOffset, y + 30, x, y, 7, 3);
+    AffineTransform t = new AffineTransform();
+    int offset = 25;
+    int rotationDegrees = (isLeft ? 1 : -1) * 45;
+    t.rotate(Math.toRadians(rotationDegrees), x, y);
+    graph.setTransform(t);
+    graph.drawImage(addHueToImage(halo, color), null, x - offset, y - offset);
     graph.dispose();
   }
-  
+
+  public static BufferedImage addHueToImage(BufferedImage im, final int color) {
+    ImageFilter filter = new RGBImageFilter() {
+      public final int filterRGB(int x, int y, int rgb) {
+        return (rgb ^ color);
+      }
+    };
+
+    ImageProducer ip = new FilteredImageSource(im.getSource(), filter);
+    return toBufferedImage(Toolkit.getDefaultToolkit().createImage(ip));
+  }
+
   /**
-   * http://stackoverflow.com/a/27461352
-   * Draw an arrow line between two point 
-   * @param g the graphic component
-   * @param x1 x-position of first point
-   * @param y1 y-position of first point
-   * @param x2 x-position of second point
-   * @param y2 y-position of second point
-   * @param d  the width of the arrow
-   * @param h  the height of the arrow
+   * Converts a given Image into a BufferedImage
+   * @param img The Image to be converted
+   * @return The converted BufferedImage
    */
-  private void drawArrowLine(Graphics g, int x1, int y1, int x2, int y2, int d, int h){
-     int dx = x2 - x1, dy = y2 - y1;
-     double D = Math.sqrt(dx*dx + dy*dy);
-     double xm = D - d, xn = xm, ym = h, yn = -h, x;
-     double sin = dy/D, cos = dx/D;
+  public static BufferedImage toBufferedImage(Image img) {
+    if (img instanceof BufferedImage) {
+      return (BufferedImage) img;
+    }
 
-     x = xm*cos - ym*sin + x1;
-     ym = xm*sin + ym*cos + y1;
-     xm = x;
+    // Create a buffered image with transparency
+    BufferedImage bimage = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
 
-     x = xn*cos - yn*sin + x1;
-     yn = xn*sin + yn*cos + y1;
-     xn = x;
+    // Draw the image on to the buffered image
+    Graphics2D bGr = bimage.createGraphics();
+    bGr.drawImage(img, 0, 0, null);
+    bGr.dispose();
 
-     int[] xpoints = {x2, (int) xm, (int) xn};
-     int[] ypoints = {y2, (int) ym, (int) yn};
-
-     g.drawLine(x1, y1, x2, y2);
-     g.fillPolygon(xpoints, ypoints, 3);
+    // Return the buffered image
+    return bimage;
   }
 
 }
