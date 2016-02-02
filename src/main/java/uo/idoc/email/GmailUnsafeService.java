@@ -8,14 +8,15 @@ import javax.mail.internet.*;
  * http://stackoverflow.com/questions/46663/how-can-i-send-an-email-by-java-application-using-gmail-yahoo-or-hotmail
  * Requires less secure access to gmail account. See https://support.google.com/accounts/answer/6010255?hl=en.
  */
-public class GmailEmailer {
+@Deprecated
+public class GmailUnsafeService implements EmailService{
   private static final String HOST = "smtp.gmail.com";
   private static final String PORT = "587";
 
   private final String username;
   private final Authenticator auth;  
   
-  public GmailEmailer(final String username, final String password) {
+  public GmailUnsafeService(final String username, final String password) {
     this.username = username;
     this.auth = new javax.mail.Authenticator() {
       protected PasswordAuthentication getPasswordAuthentication() {

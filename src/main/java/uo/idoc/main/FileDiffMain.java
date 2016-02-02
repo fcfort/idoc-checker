@@ -12,7 +12,7 @@ import com.google.common.collect.Lists;
 
 import uo.idoc.ScreenshotTaker;
 import uo.idoc.email.Emailer;
-import uo.idoc.email.GmailEmailer;
+import uo.idoc.email.GmailOAuthService;
 import uo.idoc.imgur.ImgurUploader;
 import uo.idoc.imgur.LargeImageUploader;
 import uo.idoc.runner.HttpRequestRunner;
@@ -22,12 +22,6 @@ import uo.idoc.worker.TextDiffWorker;
 
 public class FileDiffMain {
   private static final int FIVE_MINUTES_MILLIS = 5 * 60 * 1000;
-
-  @Parameter(names = "--username", description = "GMail username (no @gmail.com)", required = true)
-  private String gmailUsername;
-
-  @Parameter(names = "--password", description = "GMail password", password = true, required = true)
-  private String gmailPassword;
 
   @Parameter(names = "--recipient", description = "Emails to send alerts to", required = true)
   private List<String> recipients;
@@ -63,7 +57,7 @@ public class FileDiffMain {
     List<Integer> checkIntervalsMillis = Lists.newArrayList(FIVE_MINUTES_MILLIS);
     ExecutorService e = Executors.newFixedThreadPool(checkIntervalsMillis.size());
 
-    GmailEmailer gmailer = new GmailEmailer(gmailUsername, gmailPassword);    
+    GmailOAuthService gmailer = new GmailOAuthService();
     ScreenshotTaker screenshotTaker = new ScreenshotTaker(imageUrl, imageHeightPx, imageWidthPx, 30, tagName);
         
     ImgurWorker imgurWorker = new ImgurWorker(

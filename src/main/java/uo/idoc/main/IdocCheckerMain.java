@@ -9,7 +9,7 @@ import com.google.common.collect.Lists;
 
 import uo.idoc.worker.ImageDiffWorker;
 import uo.idoc.SimpleByteDiffer;
-import uo.idoc.email.GmailEmailer;
+import uo.idoc.email.GmailUnsafeService;
 import uo.idoc.runner.ScreenshotRunner;
 import uo.idoc.worker.ImageDiffEmailer;
 import uo.idoc.worker.ImageDiffWriter;
@@ -47,7 +47,7 @@ public class IdocCheckerMain {
 
   public void run() throws IOException {
     ImageDiffWriter checker = new ImageDiffWriter(outputPath);
-    ImageDiffEmailer emailer = new ImageDiffEmailer(new GmailEmailer(gmailUsername, gmailPassword), recipients);
+    ImageDiffEmailer emailer = new ImageDiffEmailer(new GmailUnsafeService(gmailUsername, gmailPassword), recipients);
 
     List<ImageDiffWorker> workers = Lists.<ImageDiffWorker> newArrayList(checker, emailer);
     new ScreenshotRunner(imageUrl, imageHeightPx, imageWidthPx, checkIntervalSeconds, new SimpleByteDiffer(),

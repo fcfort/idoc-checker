@@ -3,16 +3,16 @@ package uo.idoc.worker;
 import java.util.List;
 
 import uo.idoc.difference.ByteArrayDifference;
-import uo.idoc.email.GmailEmailer;
+import uo.idoc.email.GmailUnsafeService;
 
 public class ImageDiffEmailer implements ImageDiffWorker {
   
   private final String IDOC_SUBJECT = "Found IDOC!";
   
-  private final GmailEmailer emailer;
+  private final GmailUnsafeService emailer;
   private final List<String> recipients;
  
-  public ImageDiffEmailer(GmailEmailer emailer, List<String> recipients) {
+  public ImageDiffEmailer(GmailUnsafeService emailer, List<String> recipients) {
     this.emailer = emailer;
     this.recipients = recipients;
   }

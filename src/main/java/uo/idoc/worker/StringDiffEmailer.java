@@ -7,7 +7,7 @@ import difflib.Delta;
 import difflib.DiffUtils;
 import difflib.Patch;
 import uo.idoc.difference.StringDifference;
-import uo.idoc.email.GmailEmailer;
+import uo.idoc.email.GmailUnsafeService;
 
 // https://code.google.com/p/java-diff-utils/wiki/SampleUsage
 // http://stackoverflow.com/questions/13464954/how-do-i-split-a-string-by-line-break
@@ -15,10 +15,10 @@ public class StringDiffEmailer implements TextDiffWorker {
 
   private final String IDOC_SUBJECT = "Found IDOC!";
 
-  private final GmailEmailer emailer;
+  private final GmailUnsafeService emailer;
   private final List<String> recipients;
 
-  public StringDiffEmailer(GmailEmailer emailer, List<String> recipients) {
+  public StringDiffEmailer(GmailUnsafeService emailer, List<String> recipients) {
     this.emailer = emailer;
     this.recipients = recipients;
   }

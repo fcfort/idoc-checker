@@ -4,10 +4,10 @@ import java.util.List;
 
 public class Emailer {
 
-  private final GmailEmailer gmailer;
+  private final EmailService gmailer;
   private final List<String> recipients;
 
-public Emailer(GmailEmailer gmailer, List<String> recipients) {
+public Emailer(EmailService gmailer, List<String> recipients) {
   this.gmailer = gmailer;
   this.recipients = recipients;
 }
