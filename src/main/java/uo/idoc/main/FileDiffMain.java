@@ -17,7 +17,6 @@ import uo.idoc.imgur.ImgurUploader;
 import uo.idoc.imgur.LargeImageUploader;
 import uo.idoc.runner.HttpRequestRunner;
 import uo.idoc.worker.ImgurWorker;
-import uo.idoc.worker.StringDiffPrinter;
 import uo.idoc.worker.TextDiffWorker;
 
 public class FileDiffMain {
@@ -65,9 +64,7 @@ public class FileDiffMain {
         screenshotTaker, 
         new Emailer(gmailer, recipients));
     
-    List<TextDiffWorker> workers = Lists.newArrayList(
-        new StringDiffPrinter(),
-        imgurWorker);
+    List<TextDiffWorker> workers = Lists.<TextDiffWorker>newArrayList(imgurWorker);
 
     for (int millis : checkIntervalsMillis) {
       e.submit(new HttpRequestRunner(fileUrl, workers, millis));
