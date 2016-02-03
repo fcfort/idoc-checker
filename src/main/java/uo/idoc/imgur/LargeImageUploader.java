@@ -22,7 +22,7 @@ public class LargeImageUploader {
    * @throws ParseException
    * @throws IOException
    */
-  public String uploadImage(BufferedImage im) throws ParseException, IOException {
+  public String uploadImage(BufferedImage im, String title) throws ParseException, IOException {
     
     List<String> imageIds = Lists.newArrayList();
     for(BufferedImage subImage : divideByFour(im)) {
@@ -32,7 +32,7 @@ public class LargeImageUploader {
     }
     
     // Return album URL
-    String link = imgurUploader.createAlbum(imageIds).getLink();
+    String link = imgurUploader.createAlbum(imageIds, title).getLink();
     System.out.println("Creating album, got link " + link);
     return link;
   }

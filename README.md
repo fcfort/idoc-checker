@@ -14,3 +14,7 @@ The application will open a browser window for OAuth authentication upon
 starting. In addition, a client secret for the GMail API from cloud.google.com
 named "client_secret.json" needs to be placed in src/main/resources.
 
+### Testing
+
+Some integration tests require an imgur client ID. Place a file called
+"imgur_client_id" in src/test/resources.

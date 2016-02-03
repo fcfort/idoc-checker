@@ -39,7 +39,7 @@ public class ImgurUploader {
         .registerTypeAdapter(AlbumCreationResponse.class, new ImageDataDeserializer<AlbumCreationResponse>())
         .create();
   }
-
+  
   /**
    * ids[]  optional  The image ids that you want to be included in the album.
 title optional  The title of the album
@@ -52,13 +52,18 @@ cover optional  The ID of an image that you want to be the cover of the album
    * @throws IOException 
    * @throws ClientProtocolException 
    */
-  public AlbumCreationResponse createAlbum(List<String> imageIds) throws ClientProtocolException, IOException {
+  public AlbumCreationResponse createAlbum(List<String> imageIds, String albumTitle)
+      throws ClientProtocolException, IOException {
     CloseableHttpClient httpClient = HttpClients.createDefault();
 
     HttpPost httpPost = new HttpPost(ALBUM_ENDPOINT);
     httpPost.addHeader(authorization);
 
-    HttpEntity entity = MultipartEntityBuilder.create().addTextBody("ids", Joiner.on(",").join(imageIds)).build();
+    HttpEntity entity = MultipartEntityBuilder.create()
+        .addTextBody("ids", Joiner.on(",").join(imageIds))
+        .addTextBody("title", albumTitle)
+        .addTextBody("layout", "grid")
+        .build();
     httpPost.setEntity(entity);
 
     final HttpResponse response = httpClient.execute(httpPost);
@@ -67,8 +72,7 @@ cover optional  The ID of an image that you want to be the cover of the album
     httpClient.close();
     System.out.println(responseJson);
 
-    return gson.fromJson(responseJson, AlbumCreationResponse.class);        
-
+    return gson.fromJson(responseJson, AlbumCreationResponse.class);
   }
   
   /**

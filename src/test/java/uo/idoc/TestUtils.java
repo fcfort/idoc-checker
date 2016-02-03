@@ -35,4 +35,8 @@ public final class TestUtils {
   public static List<House> readResourceAsHouses(String resource) {
     return new HouseParser().parse(readResourceAsString(resource));    
   }
+  
+  public static String readImgurClientId() {
+    return readResourceAsString("imgur_client_id");
+  }
 }

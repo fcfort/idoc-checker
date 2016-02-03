@@ -2,6 +2,8 @@ package uo.idoc.worker;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import uo.idoc.ScreenshotMarker;
@@ -34,11 +36,15 @@ public class ImgurWorker implements TextDiffWorker {
     List<House> newHouses = HOUSE_PARSER.parse(diff.getNewData());
     HouseDifference houseDiff = new HouseDifference(oldHouses, newHouses);
 
+    Date now = new Date();
+    String timestampString = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(now);
+    String title = "IDOCs for " + timestampString;
+    
     try {
       BufferedImage markedImage = screenshotMarker.markScreenshot(
           screenshotTaker.takePartialScreenshot(), houseDiff);
-      String link = uploader.uploadImage(markedImage);
-      emailer.sendEmail("Found IDOC [imgur]!", link);
+      String link = uploader.uploadImage(markedImage, title);
+      emailer.sendEmail(title, link);
       System.out.println(link);
     } catch (IOException e) {
       throw new RuntimeException(e);
