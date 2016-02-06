@@ -8,8 +8,10 @@ import uo.idoc.worker.TextDiffWorker;
 
 public class HttpRequestRunner implements Runnable {
 
+  private static final int RETRY_SLEEP_TIME_MILLIS = 10_000;
+  
   private final HttpRequester requester;
-  private final String url;
+  private final String url;  
   private final int sleepTimeMillis;
   private final Iterable<TextDiffWorker> workers;
 
@@ -20,15 +22,19 @@ public class HttpRequestRunner implements Runnable {
     this.workers = workers;
   }
 
+  /**
+   * If either request (before or after) throws an exception then retry until it
+   * succeeds. This way failures to read the request won't result in a diff.
+   */
   public void run() {
     while (true) {
       System.out.println("Reading URL before");
-      String before = readUrl(url);
+      String before = getUrlWithRetries(url);
       System.out.println("Waiting " + sleepTimeMillis + " millis");
-      sleep();
+      sleep(sleepTimeMillis);
       System.out.println("Reading URL after");
-      String after = readUrl(url);
-
+      String after = getUrlWithRetries(url);
+      
       if (!before.equals(after)) {
         System.out.println("Found difference!");
         StringDifference diff = new StringDifference(before, after);
@@ -37,17 +43,19 @@ public class HttpRequestRunner implements Runnable {
         }
       }
     }
-  }
+  }  
 
-  private String readUrl(String url) {
+  private String getUrlWithRetries(String url) {
     try {
       return requester.get(url);
-    } catch (IOException e1) {
-      throw new RuntimeException("Error reading " + url, e1);
+    } catch (IOException e) {
+      System.out.println("Caught error, sleeping for " + RETRY_SLEEP_TIME_MILLIS);
+      sleep(RETRY_SLEEP_TIME_MILLIS);
+      return getUrlWithRetries(url);
     }
   }
-
-  private void sleep() {
+  
+  private void sleep(int sleepTimeMillis) {
     try {
       Thread.sleep(sleepTimeMillis);
     } catch (InterruptedException e) {

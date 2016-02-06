@@ -3,7 +3,7 @@
 ### Running
 
     mvn clean compile assembly:single
-    java -cp target/idoc-0.0.1-SNAPSHOT-jar-with-dependencies.jar uo.idoc.main.IdocCheckerMain -- \    
+    java -cp target/idoc-0.0.1-SNAPSHOT-jar-with-dependencies.jar uo.idoc.main.FileDiffMain -- \    
       --fileUrl "http://www.example.com/" \
       --recipient example@gmail.com \
       --imageUrl "http://www.example.com" \
